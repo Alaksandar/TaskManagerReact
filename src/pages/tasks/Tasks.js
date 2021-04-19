@@ -12,7 +12,6 @@ export const TasksPage = () => {
         const tasksCopy = {...tasks};
         tasksCopy[type].push({checked: false, key: tasksCopy[type].length, name})
         setTasks(tasksCopy);
-        console.log("tasks[type] ", tasks[type]);
     }
     
     
@@ -24,17 +23,17 @@ export const TasksPage = () => {
     }
 
 
+    // delete unmarked tasks by click on delete-icon";
     const onDeleteTask = (type, id) => {
 
         const tasksCopy = {...tasks};
-        const deletTask = tasksCopy[type][id];
+        const deleteTask = tasksCopy[type][id];
 
-        if(!deletTask.checked) {
+        if(deleteTask.checked) return; 
 
-            tasksCopy[type].splice(deletTask.key, 1);
-            for (let i in tasksCopy[type]) {
-                tasksCopy[type][i].key = +i;
-            }
+        tasksCopy[type].splice(deleteTask.key, 1);
+        for (let i in tasksCopy[type]) {
+            tasksCopy[type][i].key = +i;
         }
         setTasks(tasksCopy);
     }

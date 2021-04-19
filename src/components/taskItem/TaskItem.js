@@ -16,10 +16,9 @@ export const TaskItem = ({task, number, classLi, onHandleMarkTask, onDeleteIcon}
             <input type="checkbox" 
                 id={number}
                 onChange={onHandleMarkTask}
+                checked={task.checked}
             />
-            {/* <label> */}
-                {task.name}
-            {/* </label> */}
+            <label>{task.name}</label>
             <img src={EditIcon} className="edit" alt="edit"/>
             <img src={DeleteIcon} className="delete" alt="x" 
                 id={number}

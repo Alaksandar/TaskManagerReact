@@ -16,7 +16,7 @@ export const TasksColumn = ({tasks, tasksType, addNewTask, markTask, deleteTask}
 
     const handleMarkTask = (e) => {
 
-        e.target.setAttribute("checked", e.target.checked);
+        // e.target.setAttribute("checked", e.target.checked);
 
         const checkedStatus = e.target.checked;
         const checkedIndex = e.target.id;
@@ -49,10 +49,11 @@ export const TasksColumn = ({tasks, tasksType, addNewTask, markTask, deleteTask}
         showList === "title show" ? setShowList("title hide") : setShowList("title show");
     }
 
-
+    // delete unmarked tasks by click on delete-icon";
     const deleteTaskOnIcon = (e) => {
         const deleteTaskId = e.target.id;
         deleteTask(tasksType, deleteTaskId);
+        // handleMarkTask(e);
     }
 
 
