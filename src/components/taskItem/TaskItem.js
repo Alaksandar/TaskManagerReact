@@ -4,7 +4,7 @@ import "./TaskItem.scss";
 import EditIcon from "../../img/edit-icon.png"
 import DeleteIcon from "../../img/delete-icon.png"
 
-export const TaskItem = ({task, number, onHandleMarkTask, classLi}) => {
+export const TaskItem = ({task, number, classLi, onHandleMarkTask, onDeleteIcon}) => {
 
 
     return (
@@ -17,9 +17,14 @@ export const TaskItem = ({task, number, onHandleMarkTask, classLi}) => {
                 id={number}
                 onChange={onHandleMarkTask}
             />
-            <label>{task.name}</label>
+            {/* <label> */}
+                {task.name}
+            {/* </label> */}
             <img src={EditIcon} className="edit" alt="edit"/>
-            <img src={DeleteIcon} className="delete" alt="x"/>
+            <img src={DeleteIcon} className="delete" alt="x" 
+                id={number}
+                onClick={onDeleteIcon}
+            />
         </li>
     ) 
 }

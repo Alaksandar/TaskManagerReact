@@ -24,6 +24,22 @@ export const TasksPage = () => {
     }
 
 
+    const onDeleteTask = (type, id) => {
+
+        const tasksCopy = {...tasks};
+        const deletTask = tasksCopy[type][id];
+
+        if(!deletTask.checked) {
+
+            tasksCopy[type].splice(deletTask.key, 1);
+            for (let i in tasksCopy[type]) {
+                tasksCopy[type][i].key = +i;
+            }
+        }
+        setTasks(tasksCopy);
+    }
+
+
 
     return (
                 
@@ -45,6 +61,7 @@ export const TasksPage = () => {
                             tasksType="unImportant"
                             addNewTask={onAddNewTask}
                             markTask={onMarkTask}
+                            deleteTask={onDeleteTask}
                         />
                     </div>
 
@@ -55,6 +72,8 @@ export const TasksPage = () => {
                             tasksType="important"
                             addNewTask={onAddNewTask}
                             markTask={onMarkTask}
+                            deleteTask={onDeleteTask}
+
                         />    
                     </div>
 
@@ -65,6 +84,8 @@ export const TasksPage = () => {
                             tasksType="veryImportant"
                             addNewTask={onAddNewTask}
                             markTask={onMarkTask}
+                            deleteTask={onDeleteTask}
+
                         />
                     </div>
                 </div>

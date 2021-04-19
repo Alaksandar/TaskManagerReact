@@ -4,7 +4,7 @@ import {TaskItem} from "../taskItem/TaskItem";
 import "./TasksColumn.scss"
 
 
-export const TasksColumn = ({tasks, tasksType, addNewTask, markTask}) => { 
+export const TasksColumn = ({tasks, tasksType, addNewTask, markTask, deleteTask}) => { 
 
     const [showList, setShowList] = useState("title show");
     const [classTask, setClassTask] = useState("");
@@ -49,6 +49,13 @@ export const TasksColumn = ({tasks, tasksType, addNewTask, markTask}) => {
         showList === "title show" ? setShowList("title hide") : setShowList("title show");
     }
 
+
+    const deleteTaskOnIcon = (e) => {
+        const deleteTaskId = e.target.id;
+        deleteTask(tasksType, deleteTaskId);
+    }
+
+
     return (
 
         <>
@@ -73,6 +80,7 @@ export const TasksColumn = ({tasks, tasksType, addNewTask, markTask}) => {
                             number={index}
                             classLi={classTask}
                             onHandleMarkTask={handleMarkTask}
+                            onDeleteIcon={deleteTaskOnIcon}
                         />
                     )
                 })}
