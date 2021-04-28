@@ -6,16 +6,76 @@ import "./Tasks.scss";
 export const TasksPage = () => {
 
     const [tasks, setTasks] = useState({unImportant: [], important: [], veryImportant: []})
+    const [duplicateTypeCreate, setDuplicateTypeCreate] = useState({unImportant: false}, {important: false}, {veryImportant: false});
 
+    // const [cleanInputValue, setCleanInputValue] = useState("");
 
-    const onAddNewTask = (name, type) => {
+    // create a new task:
+    const addNewTask = (name, type) => {
+
         const tasksCopy = {...tasks};
-        tasksCopy[type].push({checked: false, key: tasksCopy[type].length, name})
-        setTasks(tasksCopy);
+        const {unImportant, important, veryImportant} = tasksCopy;
+        // let cleanInputValueCopy = {...cleanInputValue};
+        
+        // create a task, if there are no duplicates:
+        if(!checkDuplicates(unImportant.concat(important, veryImportant), name)) {
+
+            console.log("no duplicates");
+
+            tasksCopy[type].push({checked: false, key: tasksCopy[type].length, name: name});
+            setTasks(tasksCopy);
+
+            // cleanInputValueCopy = "";
+            // setCleanInputValue(cleanInputValueCopy);
+
+            return true;
+
+        // highlight a duplicate message:
+        } else {
+
+            console.log("duplicate found");
+
+            const duplicateTypeCreateCopy = {...duplicateTypeCreate};
+            duplicateTypeCreateCopy[type] = true;
+
+            // cleanInputValueCopy = name;
+            // setCleanInputValue(cleanInputValueCopy);
+
+            setDuplicateTypeCreate(duplicateTypeCreateCopy);
+
+            return false;
+        }
     }
+
+
+    // checking for duplicates when creating/editing a task:
+    const checkDuplicates = (tasks, name) => {
+
+        console.log("checkDuplicates");
+
+        const index = tasks.findIndex(task => task.name === name);
+
+        console.log("index ", index);
+        return index !== -1;
+    }
+
+    // remove duplicate warning at an input-text focusing:
+    const resetDuplicateType = (type) => {
+
+        console.log("resetDuplicateType");
+
+        const duplicateTypeCreateCopy = {duplicateTypeCreate};
+        console.log("resetDuplicateType ", resetDuplicateType[type]);
+
+        duplicateTypeCreateCopy[type] = false;
+
+        setDuplicateTypeCreate(duplicateTypeCreateCopy);
+    }
+
     
-    
-    const onMarkTask = (type, checked, i) => {
+
+    // mark a task:
+    const markTask = (type, checked, i) => {
 
         const tasksCopy = {...tasks};
         tasksCopy[type][i].checked = checked;
@@ -23,8 +83,8 @@ export const TasksPage = () => {
     }
 
 
-    // delete unmarked tasks by click on delete-icon";
-    const onDeleteTask = (type, id) => {
+    // delete unmarked task by click on delete-icon":
+    const deleteTask = (type, id) => {
 
         const tasksCopy = {...tasks};
         const deleteTask = tasksCopy[type][id];
@@ -35,6 +95,26 @@ export const TasksPage = () => {
         for (let i in tasksCopy[type]) {
             tasksCopy[type][i].key = +i;
         }
+        setTasks(tasksCopy);
+    }
+
+    
+    const editTask = (type, id) => {
+
+        const tasksCopy = {...tasks};
+        const editTask = tasksCopy[type][id];
+
+        if(editTask.checked) {
+
+            console.log("editTask ", editTask);
+        } 
+
+        
+
+        // tasksCopy[type].splice(editTask.key, 1);
+        // for (let i in tasksCopy[type]) {
+        //     tasksCopy[type][i].key = +i;
+        // }
         setTasks(tasksCopy);
     }
 
@@ -57,10 +137,14 @@ export const TasksPage = () => {
 
                         <TasksColumn
                             tasks={tasks.unImportant}
+        p                   dublicateTypeCreate={duplicateTypeCreate.unImportant}
+                            resetDuplicateType={resetDuplicateType}
                             tasksType="unImportant"
-                            addNewTask={onAddNewTask}
-                            markTask={onMarkTask}
-                            deleteTask={onDeleteTask}
+                            addNewTask={addNewTask}
+                            markTask={markTask}
+                            deleteTask={deleteTask}
+                            editTask={editTask}
+                            // cleanInputValue={cleanInputValue}
                         />
                     </div>
 
@@ -68,11 +152,14 @@ export const TasksPage = () => {
 
                         <TasksColumn
                             tasks={tasks.important}
+        p                   duplicateTypeCreate={duplicateTypeCreate.important}
+                            resetDuplicateType={resetDuplicateType}
                             tasksType="important"
-                            addNewTask={onAddNewTask}
-                            markTask={onMarkTask}
-                            deleteTask={onDeleteTask}
-
+                            addNewTask={addNewTask}
+                            markTask={markTask}
+                            deleteTask={deleteTask}
+                            editTask={editTask}
+                            // cleanInputValue={cleanInputValue}
                         />    
                     </div>
 
@@ -80,11 +167,14 @@ export const TasksPage = () => {
 
                         <TasksColumn
                             tasks={tasks.veryImportant}
+        p                   duplicateTypeCreate={duplicateTypeCreate.veryImportant}
+                            resetDuplicateType={resetDuplicateType}
                             tasksType="veryImportant"
-                            addNewTask={onAddNewTask}
-                            markTask={onMarkTask}
-                            deleteTask={onDeleteTask}
-
+                            addNewTask={addNewTask}
+                            markTask={markTask}
+                            deleteTask={deleteTask}
+                            editTask={editTask}
+                            // cleanInputValue={cleanInputValue}
                         />
                     </div>
                 </div>
