@@ -1,5 +1,5 @@
 import {useState} from "react";
-import {TasksColumn} from "../../components";
+import TasksColumn from "../../components/tasksColumn/TasksColumn";
 import "./Tasks.scss";
 
 
@@ -136,8 +136,8 @@ export const TasksPage = () => {
                     <div className="tasks-container-col-unImportant">
 
                         <TasksColumn
-                            tasks={tasks.unImportant}
-        p                   dublicateTypeCreate={duplicateTypeCreate.unImportant}
+                            // tasks={tasks.unImportant}
+                            dublicateTypeCreate={duplicateTypeCreate.unImportant}
                             resetDuplicateType={resetDuplicateType}
                             tasksType="unImportant"
                             addNewTask={addNewTask}
@@ -151,8 +151,8 @@ export const TasksPage = () => {
                     <div className="tasks-container-col-important">
 
                         <TasksColumn
-                            tasks={tasks.important}
-        p                   duplicateTypeCreate={duplicateTypeCreate.important}
+                            // tasks={tasks.important}
+                            duplicateTypeCreate={duplicateTypeCreate.important}
                             resetDuplicateType={resetDuplicateType}
                             tasksType="important"
                             addNewTask={addNewTask}
@@ -166,8 +166,8 @@ export const TasksPage = () => {
                     <div className="tasks-container-col-veryImportant">
 
                         <TasksColumn
-                            tasks={tasks.veryImportant}
-        p                   duplicateTypeCreate={duplicateTypeCreate.veryImportant}
+                            // tasks={tasks.veryImportant}
+                            duplicateTypeCreate={duplicateTypeCreate.veryImportant}
                             resetDuplicateType={resetDuplicateType}
                             tasksType="veryImportant"
                             addNewTask={addNewTask}

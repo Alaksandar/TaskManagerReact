@@ -1,10 +1,12 @@
 import {useState, useRef} from "react";
+import { connect } from "react-redux";
 
+import {createTask} from "../../redux/actions/taskActions";
 import {TaskItem} from "../taskItem/TaskItem";
-import "./TasksColumn.scss"
+import "./TasksColumn.scss";
 
 
-export const TasksColumn = ({tasks, tasksType, duplicateTypeCreate, resetDuplicateType, addNewTask, markTask, deleteTask, editTask}) => { 
+const TasksColumn = ({tasks, tasksType, duplicateTypeCreate, resetDuplicateType, addNewTask, markTask, deleteTask, editTask, createTask}) => { 
 
     const [showList, setShowList] = useState("title show");
     const [classTask, setClassTask] = useState("");
@@ -38,8 +40,17 @@ export const TasksColumn = ({tasks, tasksType, duplicateTypeCreate, resetDuplica
 
         if (e.key === "Enter" && taskNameTrim !== "") { // add check duplicate
             
+            // setTaskName(taskNameTrim);
+
             inputEl.current.blur();           
-            addNewTask(taskNameTrim, tasksType);
+            
+            // if(addNewTask(taskNameTrim, tasksType)) {
+            //     setTaskName("");
+            // }
+
+            createTask({taskNameTrim, tasksType})
+
+            // addNewTask(taskNameTrim, tasksType);
 
             // console.log("cleanInputValue ", cleanInputValue);
             
@@ -74,6 +85,8 @@ export const TasksColumn = ({tasks, tasksType, duplicateTypeCreate, resetDuplica
         }
 
 
+    console.log("redux state ", tasks);
+
     return (
 
         <>
@@ -89,7 +102,9 @@ export const TasksColumn = ({tasks, tasksType, duplicateTypeCreate, resetDuplica
             </h2>
 
             <ul>
-                {tasks && tasks.length > 0 && tasks.map((task, index) => {
+                {tasks[tasksType] && tasks[tasksType].length > 0 && tasks[tasksType].map((task, index) => {
+
+                    console.log("task ", task);
 
                     return (
                         <TaskItem
@@ -128,3 +143,17 @@ export const TasksColumn = ({tasks, tasksType, duplicateTypeCreate, resetDuplica
     )
     
 }
+
+
+const mapStateToProps = (state) => {
+
+    // console.log("mapStateToProps ", state);
+
+    return {tasks: state.taskReducer};
+}
+
+
+export default connect(
+    mapStateToProps,
+    {createTask},
+)(TasksColumn);
