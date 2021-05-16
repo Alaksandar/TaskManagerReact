@@ -1,60 +1,55 @@
-import {useState, useRef} from "react";
-import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import {useState, useMemo, useRef} from "react";
 
-import {createTask} from "../../redux/actions/taskActions";
 import {TaskItem} from "../taskItem/TaskItem";
 import "./TasksColumn.scss";
 
 
-const TasksColumn = ({tasks, tasksType, duplicateTypeCreate, resetDuplicateType, addNewTask, markTask, deleteTask, editTask, createTask}) => { 
+export const TasksColumn = ({tasks, tasksType, addNewTask}) => { 
 
     const [showList, setShowList] = useState("title show");
     const [classTask, setClassTask] = useState("");
+
     const [taskName, setTaskName] = useState("");
+    const [dublicateAdd, setDublicateAdd] = useState(false);
 
-    const taskNameTrim = String(taskName).trim();
-    const inputEl = useRef(null);
-
-
-    const handleMarkTask = (e) => {
-
-        const checkedStatus = e.target.checked;
-        const checkedIndex = e.target.id;
-
-        markTask(tasksType, checkedStatus, checkedIndex);
-        console.log("markTask ", tasksType, checkedStatus, checkedIndex);
-    }
+    const addInputEl  = useRef(null);
 
 
-    const handleInputChange = (e) => {
+    // const handleMarkTask = (e) => {
 
-        if(duplicateTypeCreate) {
-            
-            resetDuplicateType(tasksType);
+    //     const checkedStatus = e.target.checked;
+    //     const checkedIndex = e.target.id;
+
+    //     markTask(tasksType, checkedStatus, checkedIndex);
+    //     console.log("markTask ", tasksType, checkedStatus, checkedIndex);
+    // }
+
+
+    const handleAddInputChange  = (e) => {
+
+        //remove duplicate warning            
+        if(dublicateAdd) {
+
+            setDublicateAdd(false);
         }
 
         setTaskName(e.target.value);
+        
     }
 
-    const handleKeyDown = (e) => {
+    const handleAddKeyDown  = (e) => {
 
-        if (e.key === "Enter" && taskNameTrim !== "") { // add check duplicate
+        if (e.key === "Enter" && e.target.value.trim() !== ""  && e.target.value.length < 40) {
             
-            // setTaskName(taskNameTrim);
-
-            inputEl.current.blur();           
+            addInputEl.current.blur();           
             
-            // if(addNewTask(taskNameTrim, tasksType)) {
-            //     setTaskName("");
-            // }
+            if(addNewTask(taskName, tasksType)) {
 
-            createTask({taskNameTrim, tasksType})
+                console.log("addNewTask ", taskName);
 
-            // addNewTask(taskNameTrim, tasksType);
-
-            // console.log("cleanInputValue ", cleanInputValue);
-            
-            setTaskName("");
+                setTaskName("");
+            }
         }
     }
 
@@ -68,25 +63,9 @@ const TasksColumn = ({tasks, tasksType, duplicateTypeCreate, resetDuplicateType,
     }
 
 
+    const taskNameValue = useMemo(() => taskName, [taskName]);
 
-    // delete unmarked task by click on delete-icon";
-    const deleteTaskOnIcon = (e) => {
-
-        const deleteTaskId = e.target.id;
-        deleteTask(tasksType, deleteTaskId);
-    }
-
-
-        // edit marked task by click on edit-icon";
-        const editTaskOnIcon = (e) => {
-
-            const editTaskId = e.target.id;
-            editTask(tasksType, editTaskId);
-        }
-
-
-    console.log("redux state ", tasks);
-
+    
     return (
 
         <>
@@ -102,19 +81,18 @@ const TasksColumn = ({tasks, tasksType, duplicateTypeCreate, resetDuplicateType,
             </h2>
 
             <ul>
-                {tasks[tasksType] && tasks[tasksType].length > 0 && tasks[tasksType].map((task, index) => {
+
+                {tasks && tasks.length > 0 && tasks.map((task, index) => {
 
                     console.log("task ", task);
 
                     return (
                         <TaskItem
                             key={index}
+                            type={tasksType}
                             task={task}
                             number={index}
                             classLi={classTask}
-                            onHandleMarkTask={handleMarkTask}
-                            onDeleteIcon={deleteTaskOnIcon}
-                            onEditIcon={editTaskOnIcon}
                         />
                     )
                 })}
@@ -124,18 +102,23 @@ const TasksColumn = ({tasks, tasksType, duplicateTypeCreate, resetDuplicateType,
                 
                 <input type="text" required autoComplete="off"
                     placeholder="Новая задача..."
-                    ref={inputEl}
-                    name={tasksType} 
-                    value={taskName}
-                    onChange={handleInputChange} 
-                    onKeyDown={handleKeyDown}
+                    ref={addInputEl}
+                    name={tasksType}
+                    value={taskNameValue} 
+                    onChange={handleAddInputChange} 
+                    onKeyDown={handleAddKeyDown}
                 />
 
                 {
-                duplicateTypeCreate 
-                    &&
-                <span className="tasks-container__form-container-warning">Такая задача уже существует!</span>
-                
+                    dublicateAdd 
+                        &&
+                    <span className="tasks-container__form-container-warning">Такая задача уже существует!</span>
+                }
+
+                { 
+                    taskName.length >= 40
+                        &&
+                    <span className="tasks-container__form-container-warning">Длина не может превыщать 40 символов</span>
                 }
                     
             </div>
@@ -145,15 +128,9 @@ const TasksColumn = ({tasks, tasksType, duplicateTypeCreate, resetDuplicateType,
 }
 
 
-const mapStateToProps = (state) => {
-
-    // console.log("mapStateToProps ", state);
-
-    return {tasks: state.taskReducer};
-}
-
-
-export default connect(
-    mapStateToProps,
-    {createTask},
-)(TasksColumn);
+TasksColumn.propTypes = {
+    tasksType: PropTypes.string,
+    dublicateTypeCreate: PropTypes.bool,
+    tasks: PropTypes.array,
+    addNewTask: PropTypes.func
+};

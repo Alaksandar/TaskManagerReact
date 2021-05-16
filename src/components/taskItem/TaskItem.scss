@@ -1,3 +1,8 @@
+.clean {
+    // height: 0px;
+    display: none;
+}
+
 li {
     display: flex;
     margin: 0 10px 10px 0;
@@ -14,36 +19,15 @@ li {
     position: relative;
 
 
-    .clean {
-        // height: 0px;
-        display: none;
-    }
+    
 
     input[type="checkbox"] {
-        position: relative;
-        overflow: hidden;
         cursor: pointer;
+        margin-top: 3px;
     }
 
-    .editTaskInput {
-        color: brown;
-        outline: none;
-        border: 1px solid rgb(149, 178, 197);
-        border-radius: 5px;
-        padding: 5px 0 5px 24px;
-        // margin-bottom: 10px;
-        font-size: 16px;
-        height: 17px;
-        position: absolute;
-        top: 0px;
-        left: -1px;
-        min-width: 195px;
-        max-width: 100%;
-        opacity: 0.3;
-    }
-
-    label {
-        margin-right: 35px;
+    .task-item-name {
+        margin: 0 12px 0 6px;
     }
 
     .delete, .edit {
@@ -52,13 +36,40 @@ li {
         margin-top: 3px;
         cursor: pointer;
         position: absolute;
-    }
-
-    .delete {
         right: 6px;
-    }
+        opacity: 0.8;
 
-    .edit {
-        right: 24px;
+        &:hover {
+            opacity: 0.9;
+        }
+
+        &:active {
+            opacity: 1;
+        }
     }
+}
+
+.task-input-edit {
+    color: brown;
+    outline: none;
+    border: 1px solid rgb(149, 178, 197);
+    border-radius: 5px;
+    padding: 5px 0 5px 24px;
+    // margin-bottom: 10px;
+    font-size: 16px;
+    height: 17px;
+    position: absolute;
+    top: 0px;
+    left: -1px;
+    min-width: 195px;
+    max-width: 100%;
+    opacity: 0.5;
+}
+
+.task-item-warning {
+    color: red;
+    font-size: 16px;
+    font-family: sans-serif;
+    text-align: center;
+    margin-top: -5px;
 }

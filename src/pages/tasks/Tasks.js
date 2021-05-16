@@ -1,50 +1,61 @@
-import {useState} from "react";
-import TasksColumn from "../../components/tasksColumn/TasksColumn";
+import {useDispatch, useSelector} from 'react-redux';
+
+import Context from '../../context/Context';
+import {TasksColumn} from "../../components";
+import {addTasks, createTask, checkTask, removeTask, editTask, checkDublicateTask} from '../../redux/actions/taskActions';
 import "./Tasks.scss";
 
 
 export const TasksPage = () => {
 
-    const [tasks, setTasks] = useState({unImportant: [], important: [], veryImportant: []})
-    const [duplicateTypeCreate, setDuplicateTypeCreate] = useState({unImportant: false}, {important: false}, {veryImportant: false});
+    const dispatch = useDispatch();
 
-    // const [cleanInputValue, setCleanInputValue] = useState("");
+    const tasksState = useSelector(state => state.taskReducer);
 
     // create a new task:
     const addNewTask = (name, type) => {
 
-        const tasksCopy = {...tasks};
+        console.log('addNewTask');
+
+        const tasksCopy = {...tasksState.tasks};
+
         const {unImportant, important, veryImportant} = tasksCopy;
-        // let cleanInputValueCopy = {...cleanInputValue};
         
         // create a task, if there are no duplicates:
         if(!checkDuplicates(unImportant.concat(important, veryImportant), name)) {
 
             console.log("no duplicates");
 
-            tasksCopy[type].push({checked: false, key: tasksCopy[type].length, name: name});
-            setTasks(tasksCopy);
-
-            // cleanInputValueCopy = "";
-            // setCleanInputValue(cleanInputValueCopy);
+            dispatch(createTask({type: type.toUpperCase(), payload: {name, type}}));
 
             return true;
 
         // highlight a duplicate message:
         } else {
 
-            console.log("duplicate found");
+            console.log("duplicate has found");
 
-            const duplicateTypeCreateCopy = {...duplicateTypeCreate};
-            duplicateTypeCreateCopy[type] = true;
-
-            // cleanInputValueCopy = name;
-            // setCleanInputValue(cleanInputValueCopy);
-
-            setDuplicateTypeCreate(duplicateTypeCreateCopy);
+            dispatch(checkDublicateTask({type: type.toUpperCase(), payload: true}));
 
             return false;
         }
+    }
+
+    const handleCheckTask = (type, name, checked) => {
+
+        dispatch(checkTask({type: type.toUpperCase(), payload: {name, type, checked}}));
+    }
+
+    const handleRemoveTask = (type, name) => {
+
+        dispatch(removeTask({type: type.toUpperCase(), payload: {name, type}}));
+
+    }
+
+    const handleEditTask = (type, number) => {
+
+        console.log('editTask ', type, number);
+
     }
 
 
@@ -64,122 +75,103 @@ export const TasksPage = () => {
 
         console.log("resetDuplicateType");
 
-        const duplicateTypeCreateCopy = {duplicateTypeCreate};
-        console.log("resetDuplicateType ", resetDuplicateType[type]);
-
-        duplicateTypeCreateCopy[type] = false;
-
-        setDuplicateTypeCreate(duplicateTypeCreateCopy);
+        dispatch(checkDublicateTask({type: type.toUpperCase(), payload: false}));
     }
 
     
+    // // mark a task:
+    // const markTask = (type, checked, i) => {
+    //     const tasksCopy = {...tasks};
+    //     tasksCopy[type][i].checked = checked;
+    //     setTasks(tasksCopy);
+    // }
 
-    // mark a task:
-    const markTask = (type, checked, i) => {
+    // // delete unmarked task by click on delete-icon":
+    // const deleteTask = (type, id) => {
+    //     const tasksCopy = {...tasks};
+    //     const deleteTask = tasksCopy[type][id];
+    //     if(!deleteTask.checked) return; 
+    //     tasksCopy[type].splice(deleteTask.key, 1);
+    //     for (let i in tasksCopy[type]) {
+    //         tasksCopy[type][i].key = +i;
+    //     }
+    //     setTasks(tasksCopy);
+    // }
 
-        const tasksCopy = {...tasks};
-        tasksCopy[type][i].checked = checked;
-        setTasks(tasksCopy);
-    }
+    // const editTask = (type, id, name) => {
+    //     const tasksCopy = {...tasks};
+    //     const taskEdit = tasksCopy[type][id];
+    //     if(!taskEdit.checked) {
+    //         console.log("editTask ", taskEdit.name, name);
+    //         name = taskEdit.name
+    //         setTasks(tasksCopy);
+    //         // return taskEdit;
+    //     } 
+    //     setTasks(tasksCopy);
+    // }
 
-
-    // delete unmarked task by click on delete-icon":
-    const deleteTask = (type, id) => {
-
-        const tasksCopy = {...tasks};
-        const deleteTask = tasksCopy[type][id];
-
-        if(deleteTask.checked) return; 
-
-        tasksCopy[type].splice(deleteTask.key, 1);
-        for (let i in tasksCopy[type]) {
-            tasksCopy[type][i].key = +i;
-        }
-        setTasks(tasksCopy);
-    }
-
-    
-    const editTask = (type, id) => {
-
-        const tasksCopy = {...tasks};
-        const editTask = tasksCopy[type][id];
-
-        if(editTask.checked) {
-
-            console.log("editTask ", editTask);
-        } 
-
-        
-
-        // tasksCopy[type].splice(editTask.key, 1);
-        // for (let i in tasksCopy[type]) {
-        //     tasksCopy[type][i].key = +i;
-        // }
-        setTasks(tasksCopy);
-    }
-
-
+    const contextValue = {handleCheckTask, handleRemoveTask, handleEditTask}
 
     return (
+        
+        <Context.Provider value={contextValue}>
+
+            <div className="tasks">
+
+                <header className="tasks-header">
+                    <h1>Планировщик задач</h1>
+                </header>
                 
-        <div className="tasks">
 
-            <header className="tasks-header">
-                <h1>Планировщик задач</h1>
-            </header>
-            
+                <div className="tasks-container">
+                    
+                    <div className="tasks-container-col">
 
-            <div className="tasks-container">
-                
-                <div className="tasks-container-col">
+                        <div className="tasks-container-col-unImportant">
 
-                    <div className="tasks-container-col-unImportant">
+                            <TasksColumn
+                                dublicateTypeCreate={tasksState.dublicateTypeCreate.unImportant} 
+                                tasks={tasksState.tasks.unImportant}
+                                resetDuplicateType={resetDuplicateType}
+                                tasksType="unImportant"
+                                addNewTask={addNewTask}
+                                // markTask={markTask}
+                                // deleteTask={deleteTask}
+                                // editTask={editTask}
+                            />
+                        </div>
 
-                        <TasksColumn
-                            // tasks={tasks.unImportant}
-                            dublicateTypeCreate={duplicateTypeCreate.unImportant}
-                            resetDuplicateType={resetDuplicateType}
-                            tasksType="unImportant"
-                            addNewTask={addNewTask}
-                            markTask={markTask}
-                            deleteTask={deleteTask}
-                            editTask={editTask}
-                            // cleanInputValue={cleanInputValue}
-                        />
-                    </div>
+                        <div className="tasks-container-col-important">
 
-                    <div className="tasks-container-col-important">
+                            <TasksColumn
+                                dublicateTypeCreate={tasksState.dublicateTypeCreate.important}
+                                tasks={tasksState.tasks.important} 
+                                resetDuplicateType={resetDuplicateType}
+                                tasksType="important"
+                                addNewTask={addNewTask}
+                                // markTask={markTask}
+                                // deleteTask={deleteTask}
+                                // editTask={editTask}
+                            />    
+                        </div>
 
-                        <TasksColumn
-                            // tasks={tasks.important}
-                            duplicateTypeCreate={duplicateTypeCreate.important}
-                            resetDuplicateType={resetDuplicateType}
-                            tasksType="important"
-                            addNewTask={addNewTask}
-                            markTask={markTask}
-                            deleteTask={deleteTask}
-                            editTask={editTask}
-                            // cleanInputValue={cleanInputValue}
-                        />    
-                    </div>
+                        <div className="tasks-container-col-veryImportant">
 
-                    <div className="tasks-container-col-veryImportant">
-
-                        <TasksColumn
-                            // tasks={tasks.veryImportant}
-                            duplicateTypeCreate={duplicateTypeCreate.veryImportant}
-                            resetDuplicateType={resetDuplicateType}
-                            tasksType="veryImportant"
-                            addNewTask={addNewTask}
-                            markTask={markTask}
-                            deleteTask={deleteTask}
-                            editTask={editTask}
-                            // cleanInputValue={cleanInputValue}
-                        />
+                            <TasksColumn
+                                dublicateTypeCreate={tasksState.dublicateTypeCreate.veryImportant} 
+                                tasks={tasksState.tasks.veryImportant}
+                                resetDuplicateType={resetDuplicateType}
+                                tasksType="veryImportant"
+                                addNewTask={addNewTask}
+                                // markTask={markTask}
+                                // deleteTask={deleteTask}
+                                // editTask={editTask}
+                            />
+                        </div>
                     </div>
                 </div>
-            </div>
 
-        </div>        
+            </div>
+        </Context.Provider>      
     )
 }
