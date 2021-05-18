@@ -49,6 +49,11 @@ export const TasksColumn = ({tasks, tasksType, addNewTask}) => {
                 console.log("addNewTask ", taskName);
 
                 setTaskName("");
+            
+            } else {
+
+                setDublicateAdd(true);
+            
             }
         }
     }
@@ -65,7 +70,7 @@ export const TasksColumn = ({tasks, tasksType, addNewTask}) => {
 
     const taskNameValue = useMemo(() => taskName, [taskName]);
 
-    
+
     return (
 
         <>
@@ -84,7 +89,7 @@ export const TasksColumn = ({tasks, tasksType, addNewTask}) => {
 
                 {tasks && tasks.length > 0 && tasks.map((task, index) => {
 
-                    console.log("task ", task);
+                    // console.log("task ", task);
 
                     return (
                         <TaskItem
@@ -118,7 +123,7 @@ export const TasksColumn = ({tasks, tasksType, addNewTask}) => {
                 { 
                     taskName.length >= 40
                         &&
-                    <span className="tasks-container__form-container-warning">Длина не может превыщать 40 символов</span>
+                    <span className="tasks-container__form-container-warning">Длина не может превышать 40 символов</span>
                 }
                     
             </div>

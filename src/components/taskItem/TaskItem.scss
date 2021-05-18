@@ -47,29 +47,39 @@ li {
             opacity: 1;
         }
     }
+
+    .task-input-edit {
+        color: brown;
+        outline: none;
+        border: 1px solid rgb(149, 178, 197);
+        border-radius: 5px;
+        padding: 5px 0 5px 24px;
+        margin: -6px;
+        font-size: 16px;
+        height: 17px;
+        // position: absolute;s
+        top: 0px;
+        left: -1px;
+        // min-width: 195px;
+        max-width: 100%;
+        width: 100%;
+        opacity: 0.5;
+    }
 }
 
-.task-input-edit {
-    color: brown;
-    outline: none;
-    border: 1px solid rgb(149, 178, 197);
-    border-radius: 5px;
-    padding: 5px 0 5px 24px;
-    // margin-bottom: 10px;
-    font-size: 16px;
-    height: 17px;
-    position: absolute;
-    top: 0px;
-    left: -1px;
-    min-width: 195px;
-    max-width: 100%;
-    opacity: 0.5;
-}
+
 
 .task-item-warning {
     color: red;
-    font-size: 16px;
+    font-size: 14px;
     font-family: sans-serif;
+    display: inline-block;
     text-align: center;
-    margin-top: -5px;
+    max-width: 200px;
+    margin: 0 0 10px 6px;
+
+    @media (max-width: 490px) {
+        max-width: 400px;
+        margin: 0 0 5px 12px;
+    }
 }

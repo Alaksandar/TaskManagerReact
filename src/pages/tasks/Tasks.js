@@ -1,8 +1,10 @@
+import {useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
+import axios from 'axios';
 
 import Context from '../../context/Context';
 import {TasksColumn} from "../../components";
-import {addTasks, createTask, checkTask, removeTask, editTask, checkDublicateTask} from '../../redux/actions/taskActions';
+import {addTasks, createTask, checkTask, removeTask, editTask} from '../../redux/actions/taskActions';
 import "./Tasks.scss";
 
 
@@ -12,6 +14,37 @@ export const TasksPage = () => {
 
     const tasksState = useSelector(state => state.taskReducer);
 
+
+    useEffect(() => {
+
+        axios.get('http://localhost:8080/tasks')
+            .then(res => {
+
+                const {data} = res;
+
+                const notImportantTasks = filterTasks(data, "unImportant");
+                const importantTasks = filterTasks(data, "important");
+                const veryImportantTasks = filterTasks(data, "veryImportant");
+
+                dispatch(addTasks({tasks: notImportantTasks, type: 'UNIMPORTANT'}));
+                dispatch(addTasks({tasks: importantTasks, type: 'IMPORTANT'}));
+                dispatch(addTasks({tasks: veryImportantTasks, type: 'VERYIMPORTANT'}));
+
+
+            })
+            .catch(err => {
+                console.error(err);
+            })
+
+    }, []);
+
+
+    const filterTasks = (tasks, type) => {
+
+        return tasks.filter(task => task.type === type);
+
+    } 
+
     // create a new task:
     const addNewTask = (name, type) => {
 
@@ -20,22 +53,39 @@ export const TasksPage = () => {
         const tasksCopy = {...tasksState.tasks};
 
         const {unImportant, important, veryImportant} = tasksCopy;
+
+        const allTasks = unImportant.concat(important, veryImportant);
         
         // create a task, if there are no duplicates:
-        if(!checkDuplicates(unImportant.concat(important, veryImportant), name)) {
+        if(checkDublicates(allTasks, name)) {
 
-            console.log("no duplicates");
+        //     console.log("no duplicates");
 
-            dispatch(createTask({type: type.toUpperCase(), payload: {name, type}}));
+            // dispatch(createTask({type: type.toUpperCase(), payload: {name, type}}));
+
+            axios.post('http://localhost:8080/tasks', { 
+                checked: false,
+                name,
+                type
+            })
+            .then(res => {
+
+                dispatch(createTask({type: type.toUpperCase(), payload: {name, type}}));
+
+            })
+            .catch(err => {
+                console.error(err);
+            })
 
             return true;
 
-        // highlight a duplicate message:
+
         } else {
+            // highlight a duplicate message:
 
-            console.log("duplicate has found");
+            // console.log("duplicate has found");
 
-            dispatch(checkDublicateTask({type: type.toUpperCase(), payload: true}));
+            // dispatch(checkDublicateTask({type: type.toUpperCase(), payload: true}));
 
             return false;
         }
@@ -46,71 +96,71 @@ export const TasksPage = () => {
         dispatch(checkTask({type: type.toUpperCase(), payload: {name, type, checked}}));
     }
 
-    const handleRemoveTask = (type, name) => {
+    const handleRemoveTask = (id, name, type) => {
 
-        dispatch(removeTask({type: type.toUpperCase(), payload: {name, type}}));
+        console.log("handleRemoveTask ", id, name, type)
 
+        // dispatch(removeTask({type: type.toUpperCase(), payload: {name, type}}));
+
+        axios.delete(`http://localhost:8080/tasks/${id}`)
+        .then(res => {
+
+            dispatch(removeTask({type: type.toUpperCase(), payload: {name, type}}));
+
+        })
+        .catch(err => {
+            console.error(err);
+        })
     }
 
-    const handleEditTask = (type, number) => {
+    const handleEditTask = (type, name, editName) => {
 
-        console.log('editTask ', type, number);
+        // console.log('editTask ', type, number);
+        
+        const tasksCopy = {...tasksState.tasks};
+        const {unImportant, important, veryImportant} = tasksCopy;
 
+        const allTasks = unImportant.concat(important, veryImportant);
+        const taskIndex = allTasks.findIndex(task => task.name === name);
+
+        allTasks.splice(taskIndex, 1);
+
+        if(checkDublicates(allTasks, editName)) {
+            
+
+            dispatch(editTask({type: type.toUpperCase(), payload: {name, type, editName}}));
+
+            return true;
+
+        } else {
+
+            return false;
+        }
     }
 
 
     // checking for duplicates when creating/editing a task:
-    const checkDuplicates = (tasks, name) => {
+    const checkDublicates = (tasks, name) => {
 
         console.log("checkDuplicates");
 
         const index = tasks.findIndex(task => task.name === name);
 
         console.log("index ", index);
-        return index !== -1;
+        return index === -1;
     }
 
     // remove duplicate warning at an input-text focusing:
-    const resetDuplicateType = (type) => {
+    // const resetDuplicateType = (type) => {
 
-        console.log("resetDuplicateType");
+    //     console.log("resetDuplicateType");
 
-        dispatch(checkDublicateTask({type: type.toUpperCase(), payload: false}));
-    }
-
-    
-    // // mark a task:
-    // const markTask = (type, checked, i) => {
-    //     const tasksCopy = {...tasks};
-    //     tasksCopy[type][i].checked = checked;
-    //     setTasks(tasksCopy);
+    //     dispatch(checkDublicateTask({type: type.toUpperCase(), payload: false}));
     // }
 
-    // // delete unmarked task by click on delete-icon":
-    // const deleteTask = (type, id) => {
-    //     const tasksCopy = {...tasks};
-    //     const deleteTask = tasksCopy[type][id];
-    //     if(!deleteTask.checked) return; 
-    //     tasksCopy[type].splice(deleteTask.key, 1);
-    //     for (let i in tasksCopy[type]) {
-    //         tasksCopy[type][i].key = +i;
-    //     }
-    //     setTasks(tasksCopy);
-    // }
-
-    // const editTask = (type, id, name) => {
-    //     const tasksCopy = {...tasks};
-    //     const taskEdit = tasksCopy[type][id];
-    //     if(!taskEdit.checked) {
-    //         console.log("editTask ", taskEdit.name, name);
-    //         name = taskEdit.name
-    //         setTasks(tasksCopy);
-    //         // return taskEdit;
-    //     } 
-    //     setTasks(tasksCopy);
-    // }
 
     const contextValue = {handleCheckTask, handleRemoveTask, handleEditTask}
+
 
     return (
         
@@ -130,42 +180,34 @@ export const TasksPage = () => {
                         <div className="tasks-container-col-unImportant">
 
                             <TasksColumn
-                                dublicateTypeCreate={tasksState.dublicateTypeCreate.unImportant} 
+                                // dublicateTypeCreate={tasksState.dublicateTypeCreate.unImportant} 
                                 tasks={tasksState.tasks.unImportant}
-                                resetDuplicateType={resetDuplicateType}
+                                // resetDuplicateType={resetDuplicateType}
                                 tasksType="unImportant"
                                 addNewTask={addNewTask}
-                                // markTask={markTask}
-                                // deleteTask={deleteTask}
-                                // editTask={editTask}
+
                             />
                         </div>
 
                         <div className="tasks-container-col-important">
 
                             <TasksColumn
-                                dublicateTypeCreate={tasksState.dublicateTypeCreate.important}
+                                // dublicateTypeCreate={tasksState.dublicateTypeCreate.important}
                                 tasks={tasksState.tasks.important} 
-                                resetDuplicateType={resetDuplicateType}
+                                // resetDuplicateType={resetDuplicateType}
                                 tasksType="important"
                                 addNewTask={addNewTask}
-                                // markTask={markTask}
-                                // deleteTask={deleteTask}
-                                // editTask={editTask}
                             />    
                         </div>
 
                         <div className="tasks-container-col-veryImportant">
 
                             <TasksColumn
-                                dublicateTypeCreate={tasksState.dublicateTypeCreate.veryImportant} 
+                                // dublicateTypeCreate={tasksState.dublicateTypeCreate.veryImportant} 
                                 tasks={tasksState.tasks.veryImportant}
-                                resetDuplicateType={resetDuplicateType}
+                                // resetDuplicateType={resetDuplicateType}
                                 tasksType="veryImportant"
                                 addNewTask={addNewTask}
-                                // markTask={markTask}
-                                // deleteTask={deleteTask}
-                                // editTask={editTask}
                             />
                         </div>
                     </div>

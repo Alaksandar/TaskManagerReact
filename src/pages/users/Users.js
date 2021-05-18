@@ -14,14 +14,7 @@ export const UsersPage = () => {
                 placeholder="Поиск..."
                 required autoComplete="off"></input>
 
-            <ul>
-                <li>Иванов Иван 1</li>
-                <li>Иванов Иван 2</li>
-                <li>Иванов Иван 3</li>
-                <li>Иванов Иван 4</li>
-                <li>Иванов Иван 5</li>
 
-            </ul>               
 
             {/* <Link to="./"></Link> */}
 
