@@ -59,10 +59,6 @@ export const TasksPage = () => {
         // create a task, if there are no duplicates:
         if(checkDublicates(allTasks, name)) {
 
-        //     console.log("no duplicates");
-
-            // dispatch(createTask({type: type.toUpperCase(), payload: {name, type}}));
-
             axios.post('http://localhost:8080/tasks', { 
                 checked: false,
                 name,
@@ -81,26 +77,21 @@ export const TasksPage = () => {
 
 
         } else {
-            // highlight a duplicate message:
-
-            // console.log("duplicate has found");
-
-            // dispatch(checkDublicateTask({type: type.toUpperCase(), payload: true}));
 
             return false;
         }
     }
+
 
     const handleCheckTask = (type, name, checked) => {
 
         dispatch(checkTask({type: type.toUpperCase(), payload: {name, type, checked}}));
     }
 
+
     const handleRemoveTask = (id, name, type) => {
 
         console.log("handleRemoveTask ", id, name, type)
-
-        // dispatch(removeTask({type: type.toUpperCase(), payload: {name, type}}));
 
         axios.delete(`http://localhost:8080/tasks/${id}`)
         .then(res => {
@@ -113,22 +104,38 @@ export const TasksPage = () => {
         })
     }
 
-    const handleEditTask = (type, name, editName) => {
 
-        // console.log('editTask ', type, number);
+    const handleEditTask = (type, id, name, editName) => {
+
+        console.log('handleEditTask ', type, id, name, editName);
         
         const tasksCopy = {...tasksState.tasks};
         const {unImportant, important, veryImportant} = tasksCopy;
 
+        console.log('handleEditTask tasksCopy', tasksCopy);
+
         const allTasks = unImportant.concat(important, veryImportant);
-        const taskIndex = allTasks.findIndex(task => task.name === name);
+        const taskIndex = allTasks.findIndex(task => {
+            console.log("task ", task, task.name, name);
+            return task.name === name
+        });
+
+        console.log('handleEditTask allTasks, taskIndex', allTasks, taskIndex);
 
         allTasks.splice(taskIndex, 1);
 
         if(checkDublicates(allTasks, editName)) {
-            
 
-            dispatch(editTask({type: type.toUpperCase(), payload: {name, type, editName}}));
+            axios.put(`http://localhost:8080/tasks/${id}`, {
+                name: editName
+            })
+            .then(res => {
+    
+                dispatch(editTask({type: type.toUpperCase(), payload: {name, type, editName}}));    
+            })
+            .catch(err => {
+                console.error(err);
+            })
 
             return true;
 
@@ -149,14 +156,6 @@ export const TasksPage = () => {
         console.log("index ", index);
         return index === -1;
     }
-
-    // remove duplicate warning at an input-text focusing:
-    // const resetDuplicateType = (type) => {
-
-    //     console.log("resetDuplicateType");
-
-    //     dispatch(checkDublicateTask({type: type.toUpperCase(), payload: false}));
-    // }
 
 
     const contextValue = {handleCheckTask, handleRemoveTask, handleEditTask}
@@ -180,9 +179,7 @@ export const TasksPage = () => {
                         <div className="tasks-container-col-unImportant">
 
                             <TasksColumn
-                                // dublicateTypeCreate={tasksState.dublicateTypeCreate.unImportant} 
                                 tasks={tasksState.tasks.unImportant}
-                                // resetDuplicateType={resetDuplicateType}
                                 tasksType="unImportant"
                                 addNewTask={addNewTask}
 
@@ -192,9 +189,7 @@ export const TasksPage = () => {
                         <div className="tasks-container-col-important">
 
                             <TasksColumn
-                                // dublicateTypeCreate={tasksState.dublicateTypeCreate.important}
                                 tasks={tasksState.tasks.important} 
-                                // resetDuplicateType={resetDuplicateType}
                                 tasksType="important"
                                 addNewTask={addNewTask}
                             />    
@@ -203,9 +198,7 @@ export const TasksPage = () => {
                         <div className="tasks-container-col-veryImportant">
 
                             <TasksColumn
-                                // dublicateTypeCreate={tasksState.dublicateTypeCreate.veryImportant} 
                                 tasks={tasksState.tasks.veryImportant}
-                                // resetDuplicateType={resetDuplicateType}
                                 tasksType="veryImportant"
                                 addNewTask={addNewTask}
                             />

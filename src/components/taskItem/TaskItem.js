@@ -32,7 +32,7 @@ export const TaskItem = ({type, task, number, classLi}) => {
             && event.target.value.length < 40  
         ) {
 
-            if(handleEditTask(type, task.name, editValue)) {
+            if(handleEditTask(type, task._id, task.name, editValue)) {
 
                 setEditMode(false);
 

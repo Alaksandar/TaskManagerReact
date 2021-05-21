@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+
 import "./Login.scss";
 
 
@@ -10,7 +11,9 @@ export const LoginPage = () => {
 
             <h1>Вход</h1>
 
-            <form>
+            <form action="registration" 
+                //   method="POST"
+            >
                 <label htmlFor="text">Логин:</label>
                 <input type="text" id="login" name="login" required autoComplete="off"></input>
 

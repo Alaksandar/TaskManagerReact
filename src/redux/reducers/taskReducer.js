@@ -66,7 +66,7 @@ export const taskReducer = (state = initialState, action) => {
             
         case 'REMOVE_TASK_UNIMPORTANT':
             newUnImportantTaskList = removeTask([...state.tasks.unImportant], action.payload);   
-            console.log('REMOVE_TASK_UNIMPORTANT ', newVeryImportantTaskList, action);  
+            console.log('REMOVE_TASK_UNIMPORTANT ', newUnImportantTaskList, action);  
             return {...state, tasks: {...state.tasks, unImportant: newUnImportantTaskList}};
 
         case 'REMOVE_TASK_IMPORTANT': 
@@ -80,8 +80,9 @@ export const taskReducer = (state = initialState, action) => {
         
         case 'EDIT_TASK_UNIMPORTANT':
             newUnImportantTaskList = renameTask([...state.tasks.unImportant], action.payload); 
-            console.log('EDIT_TASK_UNIMPORTANT ', newVeryImportantTaskList, action); 
+            console.log('EDIT_TASK_UNIMPORTANT ', newUnImportantTaskList, action);
             return {...state, tasks: {...state.tasks, unImportant: newUnImportantTaskList}};
+            
 
         case 'EDIT_TASK_IMPORTANT':
             newImportantTaskList = renameTask([...state.tasks.important], action.payload); 
@@ -126,9 +127,12 @@ const removeTask = (tasks, payload) => {
 
 const renameTask = (tasks, payload) => {
 
+    console.log("renameTask ", tasks, payload);
     const taskIndex = findTask(tasks, payload);
 
     tasks[taskIndex].name = payload.editName;
+    console.log("renameTask tasks[taskIndex].name", tasks[taskIndex].name);
+
 
     return tasks;
 
