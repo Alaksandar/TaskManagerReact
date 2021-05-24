@@ -58,8 +58,7 @@ export const TaskItem = ({type, task, number, classLi}) => {
     return (
         
         <>
-            <li id={number} 
-                className={task.checked ? "checked" : classLi}
+            <li className={task.checked ? "checked" : classLi}
             >
 
                 {
@@ -67,7 +66,6 @@ export const TaskItem = ({type, task, number, classLi}) => {
                         ?
                     <>
                         <input type="checkbox" 
-                            id={number}
                             checked={task.checked}
                             onChange={(event) => handleCheckTask(type, task.name, event.target.checked)} 
                             // onChange={onHandleMarkTask}
@@ -79,13 +77,11 @@ export const TaskItem = ({type, task, number, classLi}) => {
                             task.checked
                                 ?
                             <img src={DeleteIcon} className="delete" alt="x" 
-                                id={number}
                                 onClick={() => handleRemoveTask(task._id, task.name, type)}
                             />
                                 :
                             
                             <img src={EditIcon} className="edit" alt="/"
-                                id={number}
                                 onClick={() => setEditMode(true)}
                             />                        
                         }

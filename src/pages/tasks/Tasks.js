@@ -1,8 +1,9 @@
-import {useEffect} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
-import axios from 'axios';
+import {useState, useEffect} from "react";
+import {useHistory} from "react-router-dom";
+import {useDispatch, useSelector} from "react-redux";
+import axios from "axios";
 
-import Context from '../../context/Context';
+import Context from "../../context/Context";
 import {TasksColumn} from "../../components";
 import {addTasks, createTask, checkTask, removeTask, editTask} from '../../redux/actions/taskActions';
 import "./Tasks.scss";
@@ -11,17 +12,49 @@ import "./Tasks.scss";
 export const TasksPage = () => {
 
     const dispatch = useDispatch();
+    const history = useHistory();
 
     const tasksState = useSelector(state => state.taskReducer);
+    const [userId, setUserId] = useState();
 
-
+    
     useEffect(() => {
+        if (!JSON.parse(localStorage.getItem("isAdmin"))) {
+            axios.get(`http://localhost:8080/users/userId`, {
+                headers: {"token": localStorage.getItem("token")}
+                })
+                .then(res => {
+                    console.log("res ", res);
+                    if(res.status === 200) {
+                        setUserId(res.data);
+                        getTasksRequest(res.data);
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    if(err.response.status === 401) {
+                        history.push('/login');
+                    }
+                })
+        } else {
+            const userId = history.location.pathname.split("/").[2];
+            getTasksRequest(userId);
+            console.log("userId ", userId);
+        }
+    }, []);
+    
+    
+    
 
-        axios.get('http://localhost:8080/tasks')
+
+    const getTasksRequest = (userId) => {
+
+        axios.get(`http://localhost:8080/tasks/${userId}`, {
+            headers: {"token": localStorage.getItem("token")}
+        })
             .then(res => {
-
                 const {data} = res;
-
+                console.log("data ", data);
                 const notImportantTasks = filterTasks(data, "unImportant");
                 const importantTasks = filterTasks(data, "important");
                 const veryImportantTasks = filterTasks(data, "veryImportant");
@@ -29,20 +62,18 @@ export const TasksPage = () => {
                 dispatch(addTasks({tasks: notImportantTasks, type: 'UNIMPORTANT'}));
                 dispatch(addTasks({tasks: importantTasks, type: 'IMPORTANT'}));
                 dispatch(addTasks({tasks: veryImportantTasks, type: 'VERYIMPORTANT'}));
-
-
             })
             .catch(err => {
                 console.error(err);
+                if(err.response.status === 401) {
+                    history.push("/login");
+                }
             })
-
-    }, []);
+    }
 
 
     const filterTasks = (tasks, type) => {
-
         return tasks.filter(task => task.type === type);
-
     } 
 
     // create a new task:

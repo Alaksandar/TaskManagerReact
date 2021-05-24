@@ -89,14 +89,15 @@ export const TasksColumn = ({tasks, tasksType, addNewTask}) => {
 
                 {tasks && tasks.length > 0 && tasks.map((task, index) => {
 
-                    // console.log("task ", task);
+                    console.log("task index", task, index);
 
                     return (
                         <TaskItem
-                            key={index}
+                            // key={index}
+                            key={Date.now()}
                             type={tasksType}
                             task={task}
-                            number={index}
+                            // number={index}
                             classLi={classTask}
                         />
                     )
@@ -107,6 +108,7 @@ export const TasksColumn = ({tasks, tasksType, addNewTask}) => {
                 
                 <input type="text" required autoComplete="off"
                     placeholder="Новая задача..."
+                    disabled={!JSON.parse(localStorage.getItem("isAdmin"))}
                     ref={addInputEl}
                     name={tasksType}
                     value={taskNameValue} 

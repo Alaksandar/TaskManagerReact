@@ -9,7 +9,7 @@ export const initialState = {
 
 export const taskReducer = (state = initialState, action) => {
 
-    console.log('taskReducer ', action);
+    // console.log('taskReducer ', action);
 
     let newUnImportantTaskList;
     let newImportantTaskList;
