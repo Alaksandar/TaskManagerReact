@@ -76,11 +76,13 @@ export const TaskItem = ({type, task, number, classLi}) => {
                         {
                             task.checked
                                 ?
-                            <img src={DeleteIcon} className="delete" alt="x" 
-                                onClick={() => handleRemoveTask(task._id, task.name, type)}
-                            />
+                            (
+                                JSON.parse(localStorage.getItem("isAdmin"))
+                                    ?
+                                <img src={DeleteIcon} className="delete" alt="x" 
+                                    onClick={() => handleRemoveTask(task._id, task.name, type)}/> : <></>
+                            )    
                                 :
-                            
                             <img src={EditIcon} className="edit" alt="/"
                                 onClick={() => setEditMode(true)}
                             />                        
@@ -96,8 +98,7 @@ export const TaskItem = ({type, task, number, classLi}) => {
                             value={editValue}
                             placeholder="Переименование задачи..."
                             onChange={handleEditInputChange}
-                            onKeyDown={handleEditKeyDown} />
-                        
+                            onKeyDown={handleEditKeyDown} />                       
                     </>
                 }
                     

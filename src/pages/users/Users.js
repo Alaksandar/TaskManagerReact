@@ -8,20 +8,20 @@ import "./Users.scss";
 export const UsersPage = () => {
 
     const history = useHistory();
-
     const [usersList, setUsersList] = useState([]);
 
     useEffect(() => {
-        console.log("usersList ", usersList
-        )
+
         axios.get("http://localhost:8080/users", {
-            headers: { 'token': localStorage.getItem("token") }
+            headers: { "token": localStorage.getItem("token") }
             })
             .then(res => {
                 if(res.status === 200) {
                     console.log("res ", res);
-                    setUsersList(res.data);
-                    console.log("usersList ", usersList)
+                    const userListCopy = res.data;
+                    setUsersList(userListCopy);
+                    console.log("userListCopy ", userListCopy);
+                    console.log("usersList ", usersList);
                 }
             })
             .catch(err => {

@@ -15,7 +15,7 @@ export const TasksPage = () => {
     const history = useHistory();
 
     const tasksState = useSelector(state => state.taskReducer);
-    const [userId, setUserId] = useState();
+    const [userId, setUserId] = useState("");
 
     
     useEffect(() => {
@@ -37,16 +37,14 @@ export const TasksPage = () => {
                     }
                 })
         } else {
-            const userId = history.location.pathname.split("/").[2];
-            getTasksRequest(userId);
-            console.log("userId ", userId);
+            const id = history.location.pathname.split("/")[2];
+            console.log("id ", id);
+            setUserId(id);
+            getTasksRequest(id);
         }
     }, []);
     
     
-    
-
-
     const getTasksRequest = (userId) => {
 
         axios.get(`http://localhost:8080/tasks/${userId}`, {
@@ -90,88 +88,84 @@ export const TasksPage = () => {
         // create a task, if there are no duplicates:
         if(checkDublicates(allTasks, name)) {
 
-            axios.post('http://localhost:8080/tasks', { 
-                checked: false,
-                name,
-                type
-            })
-            .then(res => {
-
-                dispatch(createTask({type: type.toUpperCase(), payload: {name, type}}));
-
-            })
-            .catch(err => {
-                console.error(err);
-            })
-
-            return true;
-
-
+            axios.post(`http://localhost:8080/tasks/${userId}`, 
+                { 
+                    checked: false,
+                    name,
+                    type
+                },
+                {
+                    headers: {"token": localStorage.getItem("token")}
+                })
+                .then(res => {
+                    console.log("res ", res)
+                    if(res.status === 201) {
+                        dispatch(createTask({type: type.toUpperCase(), payload: {name, type}}));
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    if(err.response.status === 401) {
+                        history.push("/login");
+                    }
+                })
+                return true;
         } else {
-
             return false;
         }
     }
 
 
-    const handleCheckTask = (type, name, checked) => {
-
-        dispatch(checkTask({type: type.toUpperCase(), payload: {name, type, checked}}));
-    }
-
-
+    // delete the task
     const handleRemoveTask = (id, name, type) => {
-
         console.log("handleRemoveTask ", id, name, type)
 
-        axios.delete(`http://localhost:8080/tasks/${id}`)
+        axios.delete(`http://localhost:8080/tasks/${userId}/${id}`, 
+        {
+            headers: {"token": localStorage.getItem("token")}
+        })
         .then(res => {
-
             dispatch(removeTask({type: type.toUpperCase(), payload: {name, type}}));
-
         })
         .catch(err => {
             console.error(err);
+            if(err.response.status === 401) {
+                history.push("/login");
+            }
         })
     }
 
+
+    const handleCheckTask = (type, name, checked) => {
+        dispatch(checkTask({type: type.toUpperCase(), payload: {name, type, checked}}));
+    }
 
     const handleEditTask = (type, id, name, editName) => {
 
         console.log('handleEditTask ', type, id, name, editName);
-        
         const tasksCopy = {...tasksState.tasks};
         const {unImportant, important, veryImportant} = tasksCopy;
-
         console.log('handleEditTask tasksCopy', tasksCopy);
-
         const allTasks = unImportant.concat(important, veryImportant);
         const taskIndex = allTasks.findIndex(task => {
             console.log("task ", task, task.name, name);
             return task.name === name
         });
-
         console.log('handleEditTask allTasks, taskIndex', allTasks, taskIndex);
-
         allTasks.splice(taskIndex, 1);
 
         if(checkDublicates(allTasks, editName)) {
-
             axios.put(`http://localhost:8080/tasks/${id}`, {
                 name: editName
             })
             .then(res => {
-    
                 dispatch(editTask({type: type.toUpperCase(), payload: {name, type, editName}}));    
             })
             .catch(err => {
                 console.error(err);
             })
-
             return true;
-
         } else {
-
             return false;
         }
     }
@@ -188,6 +182,33 @@ export const TasksPage = () => {
         return index === -1;
     }
 
+
+    // const editTaskRequesr = (userId, editType) => {
+    //     axios.put(`http://localhost:8080/tasks/${userId}`,
+    //         {
+    //             name: editName,
+    //             checked: false,
+    //             type
+    //         },
+    //         {headers: {"token": localStorage.getItem("token")}}
+    //         )
+    //         .then(res => {
+    //             console.log("editTaskRequesr");
+    //             editType === "checked" ? 
+    //             dispatch(checkTask({type: type.toUpperCase(), payload: {name, type, checked}}))
+    //                 :
+    //             dispatch(editTask({type: type.toUpperCase(), payload: {name, type, editName}}));
+    //             // if(res.state === 204) {
+                    
+    //             // }
+    //         })
+    //         .catch(err => {
+    //             console.error(err);
+    //             if(err.response.status === 401) {
+    //                 history.push("/login");
+    //             }
+    //         })
+    // }
 
     const contextValue = {handleCheckTask, handleRemoveTask, handleEditTask}
 

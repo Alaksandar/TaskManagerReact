@@ -93,8 +93,7 @@ export const TasksColumn = ({tasks, tasksType, addNewTask}) => {
 
                     return (
                         <TaskItem
-                            // key={index}
-                            key={Date.now()}
+                            key={index}
                             type={tasksType}
                             task={task}
                             // number={index}
