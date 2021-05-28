@@ -2,21 +2,22 @@ import {useEffect} from 'react';
 import {
   BrowserRouter as Router,
   Route,
-  useHistory,
 } from "react-router-dom";
 import axios from 'axios';
 
-import {LoginPage, RegistrationPage, UsersPage, TasksPage} from "../pages";
+import {HomePage, LoginPage, RegistrationPage, UsersPage, TasksPage} from "../pages";
 import "./App.scss";
 
 const App = () => {
-
-  const history = useHistory();
   
   return (
     <div className="app">
 
       <Router>
+
+      <Route exact path="/">
+          <HomePage />
+        </Route>
 
         <Route path="/login">
           <LoginPage />

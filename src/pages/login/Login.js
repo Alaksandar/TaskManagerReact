@@ -37,7 +37,6 @@ export const LoginPage = () => {
                 localStorage.setItem("isAdmin", isAdmin);
                 console.log("token, isAdmin ", token, isAdmin);
 
-                console.log("isAdmin ", isAdmin);
                 isAdmin ? history.push("/users") : history.push("/tasks");
             })
             .catch(err => {

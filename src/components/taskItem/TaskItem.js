@@ -6,8 +6,8 @@ import EditIcon from "../../img/edit-icon.png"
 import DeleteIcon from "../../img/delete-icon.png"
 import "./TaskItem.scss";
 
-// export const TaskItem = ({type, task, number, classLi, onHandleMarkTask, showEditInput, onDeleteIcon, onEditIcon, newTaskName, onHandleInputChange, onHandleKeyDown}) => {
-export const TaskItem = ({type, task, number, classLi}) => {
+
+export const TaskItem = ({type, task, classLi}) => {
 
     const [editValue, setEditValue] = useState(task.name);
     const [dublicatEdit, setDublicateEdit] = useState(false);
@@ -18,6 +18,7 @@ export const TaskItem = ({type, task, number, classLi}) => {
     const {handleCheckTask, handleRemoveTask, handleEditTask} = useContext(Context);
 
     useEffect(() => {
+        // console.log("editValue ", editValue);
 
         if(editMode) {
             editInputEl.current.focus();
@@ -26,31 +27,31 @@ export const TaskItem = ({type, task, number, classLi}) => {
     }, [editMode]);
 
 
-    const handleEditKeyDown = (event) => {
+    const handleDeleteTask = () => {
+        // console.log("editValue ", editValue);
+        // setEditValue("");
+        handleRemoveTask(task._id, task.name, type);
+    }
 
+
+    const handleEditKeyDown = (event) => {
+        // console.log("editValue ", editValue);
         if(event.key === "Enter" && event.target.value.trim() !== "" 
             && event.target.value.length < 40  
         ) {
-
-            if(handleEditTask(type, task._id, task.name, editValue)) {
-
+            if(handleEditTask(task._id, type, task.name, editValue, task.checked)) {
                 setEditMode(false);
-
             } else {
-
                 setDublicateEdit(true);
             }
         }
     }
 
     const handleEditInputChange = (event) => {
-
         //remove duplicate warning
         if(dublicatEdit) {
-
             setDublicateEdit(false);
         }
-
         setEditValue(event.target.value);
     }
 
@@ -67,7 +68,7 @@ export const TaskItem = ({type, task, number, classLi}) => {
                     <>
                         <input type="checkbox" 
                             checked={task.checked}
-                            onChange={(event) => handleCheckTask(type, task.name, event.target.checked)} 
+                            onChange={(event) => handleCheckTask(task._id, type, task.name, event.target.checked)} 
                             // onChange={onHandleMarkTask}
                         />
 
@@ -80,7 +81,7 @@ export const TaskItem = ({type, task, number, classLi}) => {
                                 JSON.parse(localStorage.getItem("isAdmin"))
                                     ?
                                 <img src={DeleteIcon} className="delete" alt="x" 
-                                    onClick={() => handleRemoveTask(task._id, task.name, type)}/> : <></>
+                                    onClick={handleDeleteTask}/> : <></>
                             )    
                                 :
                             <img src={EditIcon} className="edit" alt="/"

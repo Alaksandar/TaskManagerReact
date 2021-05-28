@@ -10,7 +10,7 @@ li {
     list-style-position: inside;
     // height: 25px;
     // transition: height .3s ease-out;
-    background-color: #ffffff;
+    background-color: initial;
     border: 1px solid rgba(0, 0, 0, 0.7);
     border-radius: 5px;
     padding: 5px;
@@ -18,7 +18,9 @@ li {
     max-width: 100%;
     position: relative;
 
-
+    &:hover {
+        background-color: #ffffff;
+    }
     
 
     input[type="checkbox"] {
