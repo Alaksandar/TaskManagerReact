@@ -9,7 +9,7 @@ import "./TaskItem.scss";
 
 export const TaskItem = ({type, task, classLi}) => {
 
-    const [editValue, setEditValue] = useState(task.name);
+    const [editValue, setEditValue] = useState("");
     const [dublicatEdit, setDublicateEdit] = useState(false);
     const [editMode, setEditMode] = useState(false);
 
@@ -18,7 +18,7 @@ export const TaskItem = ({type, task, classLi}) => {
     const {handleCheckTask, handleRemoveTask, handleEditTask} = useContext(Context);
 
     useEffect(() => {
-        // console.log("editValue ", editValue);
+        console.log("editValue ", editValue);
 
         if(editMode) {
             editInputEl.current.focus();
@@ -26,6 +26,9 @@ export const TaskItem = ({type, task, classLi}) => {
     
     }, [editMode]);
 
+    useEffect(() => {
+        setEditValue(task.name)
+    }, [task]);
 
     const handleDeleteTask = () => {
         // console.log("editValue ", editValue);

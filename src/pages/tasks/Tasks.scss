@@ -53,6 +53,7 @@
             display: flex;
             justify-content: space-evenly;
             margin: 10px;
+            width: 100%;
 
             &-unImportant, &-important, &-veryImportant {
                 opacity: 0.8;

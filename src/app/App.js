@@ -1,9 +1,8 @@
-import {useEffect} from 'react';
 import {
   BrowserRouter as Router,
   Route,
 } from "react-router-dom";
-import axios from 'axios';
+
 
 import {HomePage, LoginPage, RegistrationPage, UsersPage, TasksPage} from "../pages";
 import "./App.scss";

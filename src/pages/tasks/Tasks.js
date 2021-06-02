@@ -20,11 +20,10 @@ export const TasksPage = () => {
     
     useEffect(() => {
         if (!JSON.parse(localStorage.getItem("isAdmin"))) {
-            axios.get(`http://localhost:8080/users/userId`, {
-                headers: {"token": localStorage.getItem("token")}
-                })
+            axios.get(`http://localhost:8080/users/userId`, 
+                    {headers: {"token": localStorage.getItem("token")}}
+                )
                 .then(res => {
-                    console.log("res ", res);
                     if(res.status === 200) {
                         setUserId(res.data);
                         getTasksRequest(res.data);
@@ -38,7 +37,7 @@ export const TasksPage = () => {
                 })
         } else {
             const userId = history.location.pathname.split("/")[2];
-            // console.log("userId ", userId);
+
             setUserId(userId);
             getTasksRequest(userId);
         }
@@ -48,11 +47,10 @@ export const TasksPage = () => {
     const getTasksRequest = (userId) => {
 
         axios.get(`http://localhost:8080/tasks/${userId}`, {
-            headers: {"token": localStorage.getItem("token")}
-        })
+                headers: {"token": localStorage.getItem("token")}
+            })
             .then(res => {
                 const {data} = res;
-                console.log("data ", data);
                 const notImportantTasks = filterTasks(data, "unImportant");
                 const importantTasks = filterTasks(data, "important");
                 const veryImportantTasks = filterTasks(data, "veryImportant");
@@ -78,26 +76,16 @@ export const TasksPage = () => {
     // create a new task:
     const addNewTask = (name, type) => {
 
-        // console.log('addNewTask');
-
         const tasksCopy = {...tasksState.tasks};
-
         const {unImportant, important, veryImportant} = tasksCopy;
-
         const allTasks = unImportant.concat(important, veryImportant);
         
         // create a task, if there are no duplicates:
         if(checkDublicates(allTasks, name)) {
-
             axios.post(`http://localhost:8080/tasks/${userId}`, 
-                {
-                    checked: false,
-                    name,
-                    type
-                },
-                {
-                    headers: {"token": localStorage.getItem("token")}
-                })
+                    {checked: false, name, type},
+                    {headers: {"token": localStorage.getItem("token")}}
+                )
                 .then(res => {
                     console.log("res, _id", res, res.data._id)
                     if(res.status === 200) {
@@ -122,19 +110,18 @@ export const TasksPage = () => {
     const handleRemoveTask = (id, name, type) => {
         
         axios.delete(`http://localhost:8080/tasks/${userId}/${id}`, 
-        {
-            headers: {"token": localStorage.getItem("token")}
-        })
-        .then(res => {
-            console.log("handleRemoveTask ", userId, name, type, id);
-            dispatch(removeTask({type: type.toUpperCase(), payload: {name, type, userId, _id: id}}));
-        })
-        .catch(err => {
-            console.error(err);
-            if(err.response.status === 401) {
-                history.push("/login");
-            }
-        })
+                {headers: {"token": localStorage.getItem("token")}}
+            )
+            .then(res => {
+                console.log("handleRemoveTask ", userId, name, type, id);
+                dispatch(removeTask({type: type.toUpperCase(), payload: {name, type, userId, _id: id}}));
+            })
+            .catch(err => {
+                console.error(err);
+                if(err.response.status === 401) {
+                    history.push("/login");
+                }
+            })
     }
 
 
@@ -144,16 +131,16 @@ export const TasksPage = () => {
 
     const handleEditTask = (id, type, name, editName, checked) => {
 
-        console.log('handleEditTask ', type, id, name, editName);
+        // console.log('handleEditTask ', type, id, name, editName);
         const tasksCopy = {...tasksState.tasks};
         const {unImportant, important, veryImportant} = tasksCopy;
-        console.log('handleEditTask tasksCopy', tasksCopy);
+        // console.log('handleEditTask tasksCopy', tasksCopy);
         const allTasks = unImportant.concat(important, veryImportant);
         const taskIndex = allTasks.findIndex(task => {
-            console.log("task ", task, task.name, name);
+            // console.log("task ", task, task.name, name);
             return task.name === name
         });
-        console.log('handleEditTask allTasks, taskIndex', allTasks, taskIndex);
+        // console.log('handleEditTask allTasks, taskIndex', allTasks, taskIndex);
         allTasks.splice(taskIndex, 1);
 
         if(checkDublicates(allTasks, editName)) {
@@ -177,13 +164,8 @@ export const TasksPage = () => {
 
     const editTaskRequest = (id, type, name, checked, userId, editType, oldName = "") => {
         axios.put(`http://localhost:8080/tasks/${userId}`,
-            {
-                id,
-                checked,
-                name,
-                type
-            },
-            {headers: {"token": localStorage.getItem("token")}}
+                {id, checked, name, type},
+                {headers: {"token": localStorage.getItem("token")}}
             )
             .then(res => {
                 console.log("editTaskRequest");

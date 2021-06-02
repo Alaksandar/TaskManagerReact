@@ -16,16 +16,6 @@ export const TasksColumn = ({tasks, tasksType, addNewTask}) => {
     const addInputEl  = useRef(null);
 
 
-    // const handleMarkTask = (e) => {
-
-    //     const checkedStatus = e.target.checked;
-    //     const checkedIndex = e.target.id;
-
-    //     markTask(tasksType, checkedStatus, checkedIndex);
-    //     console.log("markTask ", tasksType, checkedStatus, checkedIndex);
-    // }
-
-
     const handleAddInputChange  = (e) => {
         //remove duplicate warning            
         if(dublicateAdd) {

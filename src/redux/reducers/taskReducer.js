@@ -9,8 +9,6 @@ export const initialState = {
 
 export const taskReducer = (state = initialState, action) => {
 
-    // console.log('taskReducer ', action);
-
     let newUnImportantTaskList;
     let newImportantTaskList;
     let newVeryImportantTaskList;
@@ -33,27 +31,19 @@ export const taskReducer = (state = initialState, action) => {
         
         
         case `ADD_NEW_TASK_UNIMPORTANT`:
-            console.log("type ", type);
             const newUnImportantTask = {_id: action.payload._id, name: action.payload.name, type: action.payload.type, userId: action.payload.userId, checked: false};
             newUnImportantTaskList = state.tasks.unImportant.concat(newUnImportantTask);
-            console.log("newUnImportantTask ", newUnImportantTask)
             return {...state, tasks: {...state.tasks, unImportant: newUnImportantTaskList}};
 
         case "ADD_NEW_TASK_IMPORTANT":
-            console.log("type ", type);
-            console.log("action.payload ", action.payload)
             const newImportantTask = {_id: action.payload._id, name: action.payload.name, userId: action.payload.userId, checked: false};
             newImportantTaskList = state.tasks.important.concat(newImportantTask);
-            console.log("newImportantTask ", newImportantTask);
-            console.log("newImportantTaskList ", newImportantTaskList);
             return {...state, tasks: {...state.tasks, important: newImportantTaskList}};
             
 
         case "ADD_NEW_TASK_VERYIMPORTANT":
-            console.log("type ", type);
             const newVeryImportantTask = {_id: action.payload._id, name: action.payload.name, userId: action.payload.userId, checked: false};
             newVeryImportantTaskList = state.tasks.veryImportant.concat(newVeryImportantTask);
-
             return {...state, tasks: {...state.tasks, veryImportant: newVeryImportantTaskList}};
 
 

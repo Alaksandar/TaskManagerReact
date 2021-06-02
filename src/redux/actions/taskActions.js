@@ -1,8 +1,6 @@
 export const addTasks = (data) => {
 
     const {tasks, type} = data;
-        
-    console.log('addTasks data', data);
 
     return {
         type: `ADD_TASKS_${type}`,
@@ -11,10 +9,8 @@ export const addTasks = (data) => {
 }
 
 export const createTask = (data) => {
-    console.log('createTask data', data);
     
     const {_id, name, type, userId} = data.payload;
-    console.log("createTask ", _id, name, type, userId);
 
     return {
         type: `ADD_NEW_TASK_${data.type}`,
@@ -28,7 +24,6 @@ export const editTask  = (data) => {
     console.log('editTask ', data);
     
     const {name, type, editName} = data.payload;
-    console.log("name, editName ", name, editName)
 
     return {
         type: `EDIT_TASK_${data.type}`,
