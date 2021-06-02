@@ -3,7 +3,8 @@ import {
   Route,
 } from "react-router-dom";
 
-import {LoginPage, RegistrationPage, UsersPage, TasksPage} from "../pages";
+
+import {HomePage, LoginPage, RegistrationPage, UsersPage, TasksPage} from "../pages";
 import "./App.scss";
 
 const App = () => {
@@ -13,19 +14,23 @@ const App = () => {
 
       <Router>
 
-        <Route exact path="/">
+      <Route exact path="/">
+          <HomePage />
+        </Route>
+
+        <Route path="/login">
           <LoginPage />
         </Route>
 
-        <Route exact path="/registration">
+        <Route path="/registration">
           <RegistrationPage />
         </Route>
 
-        <Route exact path="/users">
+        <Route path="/users">
           <UsersPage />
         </Route>
 
-        <Route exact path="/tasks">
+        <Route path="/tasks">
           <TasksPage />
         </Route>
       

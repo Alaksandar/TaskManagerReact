@@ -1,8 +1,38 @@
-// import { link } from "react-router-dom";
+import {useState, useEffect} from "react";
+import { useHistory } from "react-router-dom";
+import axios from "axios";
+
 import "./Users.scss";
 
 
 export const UsersPage = () => {
+
+    const history = useHistory();
+    const [usersList, setUsersList] = useState([]);
+
+    useEffect(() => {
+
+        axios.get("http://localhost:8080/users", {
+            headers: { "token": localStorage.getItem("token") }
+            })
+            .then(res => {
+                if(res.status === 200) {
+                    console.log("res ", res);
+                    const userListCopy = res.data;
+                    setUsersList(userListCopy);
+                    console.log("userListCopy ", userListCopy);
+                    console.log("usersList ", usersList);
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                if(err.response.status === 401) {
+                    history.push("/login");
+                }
+            })
+
+    }, []);
+
 
     return (
 
@@ -10,20 +40,13 @@ export const UsersPage = () => {
 
             <h1>Пользователи</h1>
 
-            <input type="text" name="findUser" 
-                placeholder="Поиск..."
-                required autoComplete="off"></input>
-
-            <ul>
-                <li>Иванов Иван 1</li>
-                <li>Иванов Иван 2</li>
-                <li>Иванов Иван 3</li>
-                <li>Иванов Иван 4</li>
-                <li>Иванов Иван 5</li>
-
-            </ul>               
-
-            {/* <Link to="./"></Link> */}
+            {usersList.map((user, index) =>     
+                <div key={index} 
+                    className="user-card"
+                    onClick={() => history.push(`/tasks/${user._id}`)}>
+                        {user.name + ", " + user.login}
+                    </div>
+            )}
 
         </div>
     )

@@ -6,10 +6,10 @@ import EditIcon from "../../img/edit-icon.png"
 import DeleteIcon from "../../img/delete-icon.png"
 import "./TaskItem.scss";
 
-// export const TaskItem = ({type, task, number, classLi, onHandleMarkTask, showEditInput, onDeleteIcon, onEditIcon, newTaskName, onHandleInputChange, onHandleKeyDown}) => {
-export const TaskItem = ({type, task, number, classLi}) => {
 
-    const [editValue, setEditValue] = useState(task.name);
+export const TaskItem = ({type, task, classLi}) => {
+
+    const [editValue, setEditValue] = useState("");
     const [dublicatEdit, setDublicateEdit] = useState(false);
     const [editMode, setEditMode] = useState(false);
 
@@ -18,6 +18,7 @@ export const TaskItem = ({type, task, number, classLi}) => {
     const {handleCheckTask, handleRemoveTask, handleEditTask} = useContext(Context);
 
     useEffect(() => {
+        console.log("editValue ", editValue);
 
         if(editMode) {
             editInputEl.current.focus();
@@ -25,107 +26,99 @@ export const TaskItem = ({type, task, number, classLi}) => {
     
     }, [editMode]);
 
+    useEffect(() => {
+        setEditValue(task.name)
+    }, [task]);
+
+    const handleDeleteTask = () => {
+        // console.log("editValue ", editValue);
+        // setEditValue("");
+        handleRemoveTask(task._id, task.name, type);
+    }
+
 
     const handleEditKeyDown = (event) => {
-
+        // console.log("editValue ", editValue);
         if(event.key === "Enter" && event.target.value.trim() !== "" 
             && event.target.value.length < 40  
         ) {
-
-            if(handleEditTask(type, task.name, editValue)) {
-
+            if(handleEditTask(task._id, type, task.name, editValue, task.checked)) {
                 setEditMode(false);
-
             } else {
-
                 setDublicateEdit(true);
             }
         }
     }
 
     const handleEditInputChange = (event) => {
-
         //remove duplicate warning
         if(dublicatEdit) {
-
             setDublicateEdit(false);
         }
-
         setEditValue(event.target.value);
     }
 
 
     return (
+        
         <>
-            {
-                !editMode
-                    ?
+            <li className={task.checked ? "checked" : classLi}
+            >
 
-                <li id={number} 
-                    className={task.checked ? "checked" : classLi}
-                >
-                    
-                    <input type="checkbox" 
-                        id={number}
-                        checked={task.checked}
-                        onChange={(event) => handleCheckTask(type, task.name, event.target.checked)} 
-                        // onChange={onHandleMarkTask}
-                    />
-                    
-                    {/* {
-                        // showEditInput 
-                        //     &&
-                        // <input className={"editTaskInput"} 
-                        //     type="text" required autoComplete="off"
-                        //     placeholder="Редактирование задачи..."
-                        //     defaultValue={newTaskName}
-                        //     onChange={onHandleInputChange} 
-                        //     onKeyDown={onHandleKeyDown}
-                        // />
-                    } */}
-
-                    <span className="task-item-name">{task.name}</span>
-
-                    {
-                        task.checked
-                            ?
-                        <img src={DeleteIcon} className="delete" alt="x" 
-                            id={number}
-                            onClick={() => handleRemoveTask(type, task._id, task.name)}
+                {
+                    !editMode
+                        ?
+                    <>
+                        <input type="checkbox" 
+                            checked={task.checked}
+                            onChange={(event) => handleCheckTask(task._id, type, task.name, event.target.checked)} 
+                            // onChange={onHandleMarkTask}
                         />
-                            :
-                        
-                        <img src={EditIcon} className="edit" alt="/"
-                            id={number}
-                            onClick={() => setEditMode(true)}
-                        />
-                    }
+
+                        <span className="task-item-name">{task.name}</span>
+
+                        {
+                            task.checked
+                                ?
+                            (
+                                JSON.parse(localStorage.getItem("isAdmin"))
+                                    ?
+                                <img src={DeleteIcon} className="delete" alt="x" 
+                                    onClick={handleDeleteTask}/> : <></>
+                            )    
+                                :
+                            <img src={EditIcon} className="edit" alt="/"
+                                onClick={() => setEditMode(true)}
+                            />                        
+                        }
+                    </>
+
+                        :
+
+                    <>
+                        <input type="text" required autoComplete="off"
+                            className="task-input-edit"
+                            ref={editInputEl}
+                            value={editValue}
+                            placeholder="Переименование задачи..."
+                            onChange={handleEditInputChange}
+                            onKeyDown={handleEditKeyDown} />                       
+                    </>
+                }
                     
-                </li>
+            </li>
 
-                    :
+            { 
+                dublicatEdit
+                    &&
+                <span className="task-item-warning">Такая задача уже существует!</span>
+            }
 
-                <div style={{marginBottom: "30px"}}>
-                    <input type="text" required autoComplete="off"
-                        className="task-input-edit"
-                        ref={editInputEl}
-                        value={editValue}
-                        placeholder="Переименование задачи..."
-                        onChange={handleEditInputChange}
-                        onKeyDown={handleEditKeyDown} />
-                    { 
-                    dublicatEdit
-                        &&
-                        <span className="task-item-warning">Такая задача уже существует!</span>
-                    }
-
-                    { 
-                    editValue.length >= 40
-                        &&
-                    <span className="task-item-warning">Длина не может превышать 40 символов</span>
-                    }
-                </div>
-            }   
+            { 
+                editValue.length >= 40
+                    &&
+                <span className="task-item-warning">Длина не может превышать 40 символов</span>
+            }
         </>
     ) 
 }
