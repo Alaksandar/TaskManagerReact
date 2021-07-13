@@ -1,0 +1,48 @@
+body {
+    padding: 0;
+    margin: 0;
+    min-width: 280px;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+.app {
+    background: #eefbff;
+    min-height: 100vh;
+}
+
+.tasks {
+
+    min-height: 100vh;
+    max-width: 1500px;
+    margin: 0 auto;
+
+    &-header {
+        text-align: center;
+        padding-top: 10px;
+        color: rgb(16 76 90);
+    
+        h1 {
+            margin: 0 auto;    
+        }
+    }
+
+    &-container {
+        width: 100%;
+        display: flex;
+        justify-content: space-around;
+        margin: 0 auto;
+
+        &-col-unImportant {
+            color: darkgreen;
+        }
+
+        &-col-important {
+            color: goldenrod;
+        }
+
+        &-col-veryImportant {
+            color: darkred;
+        }
+    }
+}
